@@ -30,18 +30,13 @@ public class AuthController {
         this.userRepository = userRepository;
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequest request) {
+    @PostMapping("/login-user")
+    public ResponseEntity<AuthResponse> logIn(@RequestBody AuthRequest request) {
         String token = jwtService.generateToken(request.getUsername());
         return ResponseEntity.ok(new AuthResponse(token));
     }
 
-    @GetMapping("/register")
-    public String showRegisterPage() {
-        return "register";
-    }
-
-    @PostMapping("/register")
+    @PostMapping("/register-user")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             return ResponseEntity.badRequest().body("Passwords do not match");

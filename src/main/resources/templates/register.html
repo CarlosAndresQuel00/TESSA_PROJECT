@@ -16,7 +16,7 @@
 <body>
 <div class="container">
     <h2>Create Account</h2>
-    <form th:action="@{/auth/register}" method="post">
+    <form th:action="@{/auth/register-user}" method="post">
         <div class="form-group">
             <label>Username</label>
             <input type="text" name="username" required/>
@@ -32,7 +32,7 @@
         <button type="submit">Register</button>
     </form>
     <div style="margin-top:10px; text-align:center;">
-        <a th:href="@{/signin}">Back to Login</a>
+        <a th:href="@{/login-page}">Back to Login</a>
     </div>
 </div>
 </body>
