@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Pedidos</title>
+</head>
+<body>
+    <h2>Mis pedidos</h2>
+    <table id="ordersTable" border="1">
+        <tr><th>Producto</th><th>Cantidad</th></tr>
+    </table>
+
+    <h3>Nuevo pedido</h3>
+    <form id="orderForm">
+        <input type="text" name="productName" placeholder="Producto" required/>
+        <input type="number" name="quantity" placeholder="Cantidad" required/>
+        <button type="submit">Registrar</button>
+    </form>
+</body>
+</html>
+
+<script>
+    async function loadOrders() {
+        const token = localStorage.getItem("jwt");
+        if (!token) {
+            window.location.href = "/login-page";
+            return;
+        }
+
+        const response = await fetch("/orders", {
+            headers: { "Authorization": "Bearer " + token }
+        });
+
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            alert("Token inválido o expirado! " + errorMessage);
+            window.location.href = "/login-page";
+            return;
+        }
+
+        const orders = await response.json();
+        const table = document.getElementById("ordersTable");
+        table.innerHTML = "<tr><th>Producto</th><th>Cantidad</th></tr>";
+        orders.forEach(o => {
+            table.innerHTML += `<tr><td>${o.productName}</td><td>${o.quantity}</td></tr>`;
+        });
+    }
+
+    document.getElementById("orderForm").addEventListener("submit", async function(e) {
+        e.preventDefault();
+        const token = localStorage.getItem("jwt");
+        const data = {
+            productName: e.target.productName.value,
+            quantity: e.target.quantity.value
+        };
+
+        try {
+            await fetch("/orders", {
+                method: "POST",
+                headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify(data)
+            });
+        } catch (error) {
+            alert("Error: " + error);
+        }
+        
+        loadOrders();
+    });
+
+    loadOrders();
+</script>

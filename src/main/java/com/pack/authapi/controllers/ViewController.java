@@ -19,4 +19,10 @@ public class ViewController {
     public String showRegisterPage() {
         return "register";
     }
+
+    @GetMapping("/orders-page")
+    public String showOrdersPage() {
+        return "orders";
+    }
+
 }

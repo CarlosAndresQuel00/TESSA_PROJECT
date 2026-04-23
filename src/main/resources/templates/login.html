@@ -2,11 +2,22 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Login</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f5f5f5; }
+        .container { width: 300px; margin: 100px auto; padding: 20px; background: #fff; border-radius: 5px; }
+        h2 { text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input { width: 93%; padding: 8px; }
+        button { width: 100%; padding: 10px; background: #28a745; color: #fff; border: none; cursor: pointer; }
+        button:hover { background: #218838; }
+    </style>
 </head>
 <body>
 <div class="container">
     <h2>Please sign in</h2>
-    <form th:action="@{/auth/login-user}" method="post">
+    <!-- <form th:action="@{/auth/login-user}" method="post"> -->
+    <form id="loginForm">
         <div>
             <label>Username</label>
             <input type="text" name="username" required/>
@@ -17,11 +28,34 @@
         </div>
         <button type="submit">Sign in</button>
     </form>
-    <div>
+    <div style="margin-top:10px; text-align:center;">
         <a th:href="@{/register-page}">
-            <button type="button">Register</button>
+            <!-- <button type="button">Register</button> -->
+            Register
         </a>
     </div>
 </div>
 </body>
 </html>
+
+<script>
+    document.getElementById("loginForm").addEventListener("submit", async function(e) {
+        e.preventDefault();
+        const data = {
+            username: e.target.username.value,
+            password: e.target.password.value
+        };
+        const response = await fetch("/auth/login-user", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        if (result.token) {
+            localStorage.setItem("jwt", result.token);
+            window.location.href = "/orders-page";
+        } else {
+            alert("Credenciales inválidas");
+        }
+    });
+</script>

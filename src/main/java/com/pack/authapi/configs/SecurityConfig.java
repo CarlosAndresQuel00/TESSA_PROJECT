@@ -28,17 +28,20 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         JwtAuthFilter jwtAuthFilter = new JwtAuthFilter(jwtService, customUserDetailsService);
-
-        http.formLogin(form -> form
-                .loginPage("/login-page")
-                .permitAll());
-
+        /*
+         * http.formLogin(form -> form
+         * .loginPage("/login-page")
+         * .permitAll());
+         */
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login-page", "/register-page", "/auth/**").permitAll()
+                        .requestMatchers("/**", "/auth/**").permitAll()
+                        .requestMatchers("/orders/**").authenticated()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        http.formLogin(form -> form.disable());
 
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
